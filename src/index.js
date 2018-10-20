@@ -2,9 +2,10 @@
 import Button from "./components/button/index";
 import Input from "./components/input/index";
 import loadingBar from "./components/loadingBar/index";
+import Pagination from "./components/pagination/index";
 
 const components = [
-  Button, Input,
+  Button, Input, Pagination
 ];
 const install = function (Vue) {
   const vue = Vue;
