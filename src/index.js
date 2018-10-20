@@ -14,6 +14,7 @@ import Switch from './components/switch/index';
 import TabPane from './components/tabPane/index';
 import Tabs from './components/tabs/index';
 import Upload from './components/upload/index';
+import Pagination from "./components/pagination/index";
 
 const components = [
   Badge,
@@ -31,7 +32,9 @@ const components = [
   TabPane,
   Tabs,
   Upload,
+  Pagination
 ];
+
 const install = function(Vue) {
   const vue = Vue;
   // 注册全局组件
@@ -66,4 +69,5 @@ export default {
   TabPane,
   Tabs,
   Upload,
+  Pagination
 };

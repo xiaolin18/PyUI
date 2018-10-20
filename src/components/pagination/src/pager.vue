@@ -1,0 +1,242 @@
+<template>
+  <ul class="py-pager"  @click="changePage">
+    <li
+      :class="[
+                'py-pager__page',
+                simple ? 'py-pager--simple' : 'py-pager--notsimple',
+                current === 1 ? 'py-pager--active' : '',
+                disabled ? 'py-pager--disabled' : ''
+              ]"
+    >1</li>
+    <li
+      v-show="showPrev"
+      :class="[
+                'py-pager__prev',
+                simple ? 'py-pager--simple' : 'py-pager--notsimple',
+                leftFlag === '<<' ? 'py-pager--active' : '',
+                disabled ? 'py-pager--disabled' : ''
+              ]"
+      @mouseenter="onMouseenter('left')"
+      @mouseleave="onMouseleave('left')"
+    >
+      {{ leftFlag }}
+    </li>
+    <li
+      v-for="(page, index) in pageList"
+      :class="[
+                'py-pager__page',
+                simple ? 'py-pager--simple' : 'py-pager--notsimple',
+                current === page ? 'py-pager--active' : '',
+                disabled ? 'py-pager--disabled' : ''
+              ]"
+      :key="index"
+    >
+      {{ page }}
+    </li>
+    <li
+      v-show="showNext"
+      :class="[
+                'py-pager__next',
+                simple ? 'py-pager--simple' : 'py-pager--notsimple',
+                rightFlag === '>>' ? 'py-pager--active' : '',
+                disabled ? 'py-pager--disabled' : '',
+              ]"
+      @mouseenter="onMouseenter('right')"
+      @mouseleave="onMouseleave('right')"
+    >
+      {{ rightFlag }}
+    </li>
+    <li
+      :class="[
+                'py-pager__page',
+                simple ? 'py-pager--simple' : 'py-pager--notsimple',
+                current === pageCount ? 'py-pager--active' : '',
+                disabled ? 'py-pager--disabled' : ''
+              ]"
+    >
+      {{ pageCount }}
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  name: "PyPagination",
+  props: {
+    pageCount: Number,
+    currentPage: Number,
+    disabled: Boolean,
+    pagerCount: Number,
+    simple: Boolean,
+  },
+  data () {
+    return {
+      showPrev: false,
+      showNext: false,
+      current: null,
+      leftFlag: '...',
+      rightFlag: '...',
+    };
+  },
+  computed: {
+    // 分页
+    pageList () {
+      const currentNum = Number(this.current);
+      const pageNum = Number(this.pageCount);
+      const pagerNum = Number(this.pagerCount);
+      const middleArray = [];
+      const halfPagerNum = parseInt((pagerNum - 3) / 2);
+
+      if (pageNum > pagerNum) {
+        const maxCurrent = pagerNum - 1 - halfPagerNum;
+        if (currentNum > maxCurrent) {
+          const maxPage = Number(currentNum + halfPagerNum);
+          const minPage = Number(pageNum - (pagerNum - 2));
+          if (maxPage < pageNum) {
+            for (let i = currentNum - halfPagerNum; i <= currentNum + halfPagerNum; i += 1) {
+              middleArray.push(i);
+            }
+          } else {
+            for (let i = pageNum - 1; i > minPage; i--) {
+              middleArray.unshift(i);
+            }
+          }
+        } else {
+          for (let i = 2; i < pagerNum; i += 1) {
+            middleArray.push(i);
+          }
+        }
+      } else {
+        for (let i = 2; i < pageNum; i += 1) {
+          middleArray.push(i);
+        }
+      }
+      const frontIndex = middleArray.indexOf(2);
+      const endIndex = middleArray.indexOf(pageNum - 1);
+      this.showPrev = frontIndex === -1;
+      this.showNext = endIndex === -1;
+      return middleArray;
+    },
+  },
+  watch: {
+    pageCount: {
+      immediate: true,
+      handler: 'compare',
+    },
+  },
+  beforeMount () {
+    this.current = this.currentPage;
+  },
+  methods: {
+    // 是否显示快速移动
+    compare () {
+      if (this.pageCount > this.pagerCount) {
+        this.showPrev = true;
+        this.showNext = true;
+      } else {
+        this.showPrev = false;
+        this.showNext = false;
+      }
+    },
+    // 修改当前页码
+    changePage (_event) {
+      if (this.disabled) {
+        return;
+      }
+      const targetClass = _event.target.className;
+      const quickStep = this.pagerCount - 3;
+      if (targetClass.indexOf('prev') > -1) {
+        this.current = Number(this.current - quickStep);
+        if (this.current < 2) {
+          this.current = 2;
+        }
+      } else if (targetClass.indexOf('next') > -1) {
+        this.current = Number(this.current + quickStep);
+        if (this.current > this.pageCount) {
+          this.current = this.pageCount;
+        }
+      } else {
+        this.current = Number(_event.target.innerText);
+      }
+    },
+    // 鼠标在快速移动标识上的移入移出事件
+    onMouseenter (_type) {
+      if (this.disabled) {
+        return;
+      }
+      if (_type === 'left') {
+        this.leftFlag = '<<';
+      } else if (_type === 'right') {
+        this.rightFlag = '>>';
+      }
+    },
+    onMouseleave (_type) {
+      if (_type === 'left') {
+        this.leftFlag = '...';
+      } else if (_type === 'right') {
+        this.rightFlag = '...';
+      }
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+  @import '../../../base/themes.scss';
+  $prefixCls: "py-pager";
+
+  $notsimpleBackground: $color-active;
+  $notsimpleNotactiveBackground: #f4f4f5;
+
+  .#{$prefixCls} {
+    & li {
+      display: inline-block;
+      margin: 0 0.3125rem;
+      color: $color;
+      cursor: pointer;
+      width: 1.875rem;
+      height: 1.875rem;
+      text-align: center;
+      line-height: 1.875rem;
+      border-radius: 0.125rem;
+    }
+    &--notsimple {
+      background-color: $notsimpleNotactiveBackground;
+      &.py-pager--active {
+        color: #fff;
+        background-color: $notsimpleBackground;
+        &:hover {
+          color: #fff;
+        }
+      }
+      &.py-pager--disabled {
+        color: $color;
+        cursor: not-allowed;
+        &.py-pager--active {
+          background-color: $notsimpleNotactiveBackground;
+        }
+        &:hover {
+          color: $color;
+        }
+      }
+      &:hover {
+        color: $color-hover;
+      }
+    }
+    &--simple {
+      &.py-pager--active {
+        color: $color-active;
+      }
+      &.py-pager--disabled {
+        color: $color;
+        cursor: not-allowed;
+        &:hover {
+          color: $color;
+        }
+      }
+      &:hover {
+        color: $color-hover;
+      }
+    }
+  }
+</style>
