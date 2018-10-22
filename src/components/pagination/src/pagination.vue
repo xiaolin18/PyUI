@@ -5,6 +5,8 @@
     :current-page="currentPage"
     :disabled="disabled"
     :simple="simple"
+    :prev-text="prevText"
+    :next-text="nextText"
   ></py-pager>
 </template>
 
@@ -35,7 +37,17 @@ export default {
       required: false,
       default: false
     },
-    simple: Boolean
+    simple: Boolean,
+    prevText: {
+      type: String,
+      required: false,
+      default: '>'
+    },
+    nextText: {
+      type: String,
+      required: false,
+      default: '<'
+    }
   } 
 }
 </script>

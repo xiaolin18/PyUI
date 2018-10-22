@@ -2,6 +2,15 @@
   <ul class="py-pager"  @click="changePage">
     <li
       :class="[
+                'py-pager__prev',
+                simple ? 'py-pager--simple' : 'py-pager--notsimple',
+                (disabled || current === 1) ? 'py-pager--disabled' : ''
+              ]"
+    >
+      {{ prevText }}
+    </li>
+    <li
+      :class="[
                 'py-pager__page',
                 simple ? 'py-pager--simple' : 'py-pager--notsimple',
                 current === 1 ? 'py-pager--active' : '',
@@ -11,7 +20,7 @@
     <li
       v-show="showPrev"
       :class="[
-                'py-pager__prev',
+                'py-pager--prev',
                 simple ? 'py-pager--simple' : 'py-pager--notsimple',
                 leftFlag === '<<' ? 'py-pager--active' : '',
                 disabled ? 'py-pager--disabled' : ''
@@ -36,7 +45,7 @@
     <li
       v-show="showNext"
       :class="[
-                'py-pager__next',
+                'py-pager--next',
                 simple ? 'py-pager--simple' : 'py-pager--notsimple',
                 rightFlag === '>>' ? 'py-pager--active' : '',
                 disabled ? 'py-pager--disabled' : '',
@@ -56,6 +65,15 @@
     >
       {{ pageCount }}
     </li>
+    <li
+      :class="[
+                'py-pager__next',
+                simple ? 'py-pager--simple' : 'py-pager--notsimple',
+                (disabled || current === pageCount) ? 'py-pager--disabled' : ''
+              ]"
+    >
+      {{ nextText }}
+    </li>
   </ul>
 </template>
 
@@ -68,6 +86,8 @@ export default {
     disabled: Boolean,
     pagerCount: Number,
     simple: Boolean,
+    prevText: String,
+    nextText: String
   },
   data () {
     return {
@@ -145,16 +165,28 @@ export default {
       }
       const targetClass = _event.target.className;
       const quickStep = this.pagerCount - 3;
-      if (targetClass.indexOf('prev') > -1) {
+      if (targetClass.indexOf('--prev') > -1) {
         this.current = Number(this.current - quickStep);
         if (this.current < 2) {
           this.current = 2;
         }
-      } else if (targetClass.indexOf('next') > -1) {
+      } else if (targetClass.indexOf('--next') > -1) {
         this.current = Number(this.current + quickStep);
         if (this.current > this.pageCount) {
           this.current = this.pageCount;
         }
+      } else if (targetClass.indexOf('__prev') > -1) {
+        const minCurrent = this.current - 1;
+        if (minCurrent > 0) {
+          this.current = this.current - 1
+        }
+        // 上一页失效，不可再点击，current仍为1
+      } else if (targetClass.indexOf('__next') > -1) {
+        const maxCurrent = this.current + 1;
+        if (maxCurrent <= this.pageCount) {
+          this.current = maxCurrent;
+        }
+        // 下一页失效，不可再点击，current仍为最后一页
       } else {
         this.current = Number(_event.target.innerText);
       }
@@ -194,11 +226,16 @@ export default {
       margin: 0 0.3125rem;
       color: $color;
       cursor: pointer;
-      width: 1.875rem;
-      height: 1.875rem;
       text-align: center;
       line-height: 1.875rem;
       border-radius: 0.125rem;
+    }
+    &__page, &--prev, &--next {
+      width: 1.875rem;
+      height: 1.875rem;
+    }
+    &__prev, &__next {
+      padding: 0 0.5rem;
     }
     &--notsimple {
       background-color: $notsimpleNotactiveBackground;
