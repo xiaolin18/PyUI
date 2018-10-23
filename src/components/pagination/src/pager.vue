@@ -143,6 +143,9 @@ export default {
       immediate: true,
       handler: 'compare',
     },
+    currentPage (_val) {
+      this.current = _val;
+    }
   },
   beforeMount () {
     this.current = this.currentPage;
@@ -190,6 +193,7 @@ export default {
       } else {
         this.current = Number(_event.target.innerText);
       }
+      this.$emit('changePage', Number(this.current))
     },
     // 鼠标在快速移动标识上的移入移出事件
     onMouseenter (_type) {
