@@ -1,6 +1,6 @@
 <template>
   <div class="py-pagination">{{ current }}
-    <div class="py-pagination__total">共<span>{{ total }}</span>条</div>
+    <!-- <div class="py-pagination__total">共<span>{{ total }}</span>条</div> -->
     <py-pager
       :page-count="pageCount"
       :pager-count="pagerCount"

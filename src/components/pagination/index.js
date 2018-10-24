@@ -1,4 +1,4 @@
-import PYPagination from './src/pagination.vue';
+import PYPagination from './src/pagination.js';
 
 PYPagination.install = Vue => {
   Vue.component(PyPagination.name, PYPagination);

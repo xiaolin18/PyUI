@@ -6,7 +6,8 @@
       prev-text="上一页"
       next-text="下一页"
       :total="100"
-    ></py-pagination>
+      :level="6"
+    >casdfsad</py-pagination>
   </div>
 </template>
 

@@ -29,7 +29,6 @@ export default {
   },
   watch: {
     currentPage (_val) {
-      console.log('------', _val)
       this.current = _val;
     }
   },
@@ -75,9 +74,7 @@ export default {
         box-shadow: 0 0 4px $border-color-hover;
       }
     }
-    
   }
-
 </style>
 
 
