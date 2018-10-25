@@ -1,7 +1,6 @@
 <template>
   <ul class="py-pager"  @click="changePage">
     <li
-      v-show="layoutList.indexOf('prev')!==-1"
       :class="[
                 'py-pager__prev',
                 simple ? 'py-pager--simple' : 'py-pager--notsimple',
@@ -67,7 +66,6 @@
       {{ pageCount }}
     </li>
     <li
-      v-show="layoutList.indexOf('next')===-1 ? false : true"
       :class="[
                 'py-pager__next',
                 simple ? 'py-pager--simple' : 'py-pager--notsimple',
@@ -89,8 +87,7 @@ export default {
     pagerCount: Number,
     simple: Boolean,
     prevText: String,
-    nextText: String,
-    layout: String
+    nextText: String
   },
   data () {
     return {
@@ -102,12 +99,6 @@ export default {
     };
   },
   computed: {
-    layoutList () {
-      let layoutArr = this.layout.split(',');
-      return layoutArr.map((item) => {
-        return item.trim()
-      });
-    },
     // 分页
     pageList () {
       const currentNum = Number(this.current);

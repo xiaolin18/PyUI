@@ -52,7 +52,12 @@ export default {
     },
     layout: {
       type: String,
-      default: 'total, prev, pager, next, jumper, pageInput'
+      default: 'total, pager, jumper, pageInput'
+    }
+  },
+  data () {
+    return {
+      current: this.currentPage
     }
   },
   render (createElement) {
@@ -62,16 +67,20 @@ export default {
     if (!layout) return;
     const CHILD_TEMPLATE = {
       pager:  <py-pager 
-                currentPage={ this.currentPage } 
+                currentPage={ this.current } 
                 pageCount={ this.pageCount } 
                 pagerCount={ this.pagerCount }
                 layout={ this.layout }
+                disabled={ this.disabled }
+                simple={ this.simple }
                 prevText={ this.prevText }
                 nextText={ this.nextText }
+                on-changePage={ this.changePage }
               ></py-pager>,
       jumper:  <py-page-input
-                    currentPage={ this.currentPage } 
+                    currentPage={ this.current } 
                     pageCount={ this.pageCount } 
+                    on-changeCurrent={ this.changeCurrent }
                   ></py-page-input>,
       slot:  <my-slot></my-slot>,
       total: <total></total>
@@ -85,5 +94,13 @@ export default {
       }
     });
     return template
+  },
+  methods: {
+    changeCurrent (_page) {
+      this.current = _page;
+    },
+    changePage (_page) {
+      this.current = _page;
+    }
   }
 }
